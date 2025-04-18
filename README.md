@@ -57,26 +57,32 @@ An OpenAI API key with access to the GPT-4 model (for question-answering functio
 
 ### 1. Clone the repository and navigate into it:
 
+'''
 git clone https://github.com/yourusername/ai-document-search-api.git
 cd ai-document-search-api
+'''
 
 
 ### 2. Create a virtual environment (optional, but recommended) and activate it:
 
+'''
 python3 -m venv venv
 source venv/bin/activate # On Windows: venv\Scripts\activate
-
+'''
 
 ### 3. Install dependencies:
 
+'''
 pip install -r requirements.txt
-
+'''
 
 ### 4. Configure environment variables:
 
 Copy the file .env.example to .env:
 
+'''
 cp .env.example .env
+'''
 
 Open .env in a text editor and insert your OpenAI API key. For example:
 
@@ -92,7 +98,9 @@ After installation and setup, you can run the Flask API locally for testing.
 
 Using Flask's development server (for quick testing):
 
+'''
 python app.py
+'''
 
 This will start the server on http://localhost:5000.
 
