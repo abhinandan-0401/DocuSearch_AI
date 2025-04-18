@@ -57,7 +57,7 @@ An OpenAI API key with access to the GPT-4 model (for question-answering functio
 
 ### 1. Clone the repository and navigate into it:
 
-'''
+'''bash
 git clone https://github.com/yourusername/ai-document-search-api.git
 cd ai-document-search-api
 '''
