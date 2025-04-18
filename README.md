@@ -5,7 +5,7 @@
 The project is organized as follows:
 
 .
-├── app.py # Flask application (routes and API endpoints)
+├── app.py # Flask application (routes and API endpoints) <br>
 ├── config.py # Configuration settings (environment variables, API keys)
 ├── embedding.py # Functions for generating text embeddings via OpenAI API
 ├── vector_store.py # In-memory vector database and similarity search logic
