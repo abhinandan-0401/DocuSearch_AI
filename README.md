@@ -4,20 +4,20 @@
 
 The project is organized as follows:
 
-.
+. <br>
 ├── app.py # Flask application (routes and API endpoints) <br>
-├── config.py # Configuration settings (environment variables, API keys)
-├── embedding.py # Functions for generating text embeddings via OpenAI API
-├── vector_store.py # In-memory vector database and similarity search logic
-├── utils.py # Helper functions (cosine similarity, GPT-4 query handling, etc.)
-├── requirements.txt # Python dependencies
-├── Dockerfile # Container configuration for Docker
-├── .dockerignore # Files to exclude when building the Docker image
-├── .env.example # Example environment variable definitions
-├── app.yaml # Sample Google App Engine configuration
-├── zappa_settings.json # Sample Zappa configuration for AWS Lambda
-├── postman_collection.json # Postman collection with example API requests
-└── README.md # Documentation and usage instructions
+├── config.py # Configuration settings (environment variables, API keys) <br>
+├── embedding.py # Functions for generating text embeddings via OpenAI API <br>
+├── vector_store.py # In-memory vector database and similarity search logic <br>
+├── utils.py # Helper functions (cosine similarity, GPT-4 query handling, etc.) <br>
+├── requirements.txt # Python dependencies <br>
+├── Dockerfile # Container configuration for Docker <br>
+├── .dockerignore # Files to exclude when building the Docker image <br>
+├── .env.example # Example environment variable definitions <br>
+├── app.yaml # Sample Google App Engine configuration <br>
+├── zappa_settings.json # Sample Zappa configuration for AWS Lambda <br>
+├── postman_collection.json # Postman collection with example API requests <br>
+└── README.md # Documentation and usage instructions <br>
 
 - app.py: Initializes the Flask app and defines the API endpoints (/documents, /search, /ask, /health).
 
