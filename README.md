@@ -57,32 +57,24 @@ An OpenAI API key with access to the GPT-4 model (for question-answering functio
 
 ### 1. Clone the repository and navigate into it:
 
-'''
 git clone https://github.com/abhinandan-0401/DocuSearch_AI.git <br>
 cd DocuSearch_AI <br>
-'''
 
 
 ### 2. Create a virtual environment (optional, but recommended) and activate it:
 
-'''
 python3 -m venv venv
 source venv/bin/activate # On Windows: venv\Scripts\activate
-'''
 
 ### 3. Install dependencies:
 
-'''
 pip install -r requirements.txt
-'''
 
 ### 4. Configure environment variables:
 
 Copy the file .env.example to .env:
 
-'''
 cp .env.example .env
-'''
 
 Open .env in a text editor and insert your OpenAI API key. For example:
 
@@ -90,17 +82,16 @@ OPENAI_API_KEY=sk-your-openai-key-here
 
 (Optional) If you do not have access to GPT-4, you can set QA_MODEL=gpt-3.5-turbo in the .env file to use GPT-3.5 for the question-answering endpoint.
 
-*Security: Never commit your actual .env file or API keys to source control. The application will load this API key from the environment at runtime.*
+<b><i>Security: Never commit your actual .env file or API keys to source control. The application will load this API key from the environment at runtime.</i></b>
 
-Running the API Locally
+
+## Running the API Locally
 
 After installation and setup, you can run the Flask API locally for testing.
 
 Using Flask's development server (for quick testing):
 
-'''
 python app.py
-'''
 
 This will start the server on http://localhost:5000.
 
@@ -114,11 +105,11 @@ This will run the app with Gunicorn on port 5000. (Gunicorn is installed via req
 Once running, you can use curl, Postman, or a browser to interact with the API endpoints.
 For example, to check if the server is running, open http://localhost:5000/health in your browser or via curl.
 
-API Endpoints
+## API Endpoints
 
 The following endpoints are available in the API:
 
-1. POST /documents – Add a Document
+### 1. POST /documents – Add a Document
 
 Add (or update) a document in the search index by providing an id and text.
 
@@ -137,7 +128,7 @@ Response:
 
 { "message": "Document added", "id": "doc1" }
 
-2. GET /search – Search Documents
+### 2. GET /search – Search Documents
 
 Query the indexed documents for relevant matches using natural language. This uses semantic embedding similarity to find documents related to the query (rather than exact keyword matching).
 
@@ -179,7 +170,7 @@ Response:
 
 (The above example assumes a document about "Jupiter" was added, and it is returned as a relevant result for the query "planet.")
 
-3. GET /ask – Ask a Question
+### 3. GET /ask – Ask a Question
 
 Ask a natural language question and get an answer derived from the content of the indexed documents. This endpoint uses GPT-4 (or the model you configure) to generate an answer based on the top relevant documents.
 
@@ -211,7 +202,7 @@ Response:
 
 Note: The quality of the answer depends on the indexed documents. Ensure you've added relevant documents via /documents (for example, a document about planets for the question above). Also, this endpoint requires an OpenAI API key with access to the GPT-4 model. If you don't have GPT-4 access, adjust the model via the QA_MODEL environment variable as described above.
 
-4. GET /health – Health Check
+### 4. GET /health – Health Check
 
 A simple health-check endpoint to verify that the service is running.
 
@@ -232,14 +223,14 @@ Deployment
 
 This application is designed to be easily deployable on cloud platforms or containers. Below are guides for deploying to Google Cloud and AWS, as well as using Docker.
 
-Deploying to Google Cloud App Engine
+## Deploying to Google Cloud App Engine
 
 You can deploy this API on Google Cloud App Engine (Standard environment):
 
-1. Setup GCP Project: Ensure you have a Google Cloud project with App Engine enabled, and that you have the gcloud CLI installed and authenticated.
+### 1. Setup GCP Project: Ensure you have a Google Cloud project with App Engine enabled, and that you have the gcloud CLI installed and authenticated.
 
 
-2. Update app.yaml: Edit the provided app.yaml file and:
+### 2. Update app.yaml: Edit the provided app.yaml file and:
 
 Verify the runtime (e.g., python310 or python311) is correct for your Python version.
 
@@ -247,14 +238,14 @@ Set the OPENAI_API_KEY in the env_variables section (or consider using GCP Secre
 
 
 
-3. Deploy: Run the following command from the project directory:
+### 3. Deploy: Run the following command from the project directory:
 
 gcloud app deploy
 
 This will deploy the application to App Engine. The entrypoint in app.yaml uses Gunicorn to run the app.
 
 
-4. Access the API: Once deployed, your API will be accessible at your App Engine URL (e.g., https://<your-project-id>.uc.r.appspot.com). You can test the /health endpoint or others to ensure it's working.
+### 4. Access the API: Once deployed, your API will be accessible at your App Engine URL (e.g., https://<your-project-id>.uc.r.appspot.com). You can test the /health endpoint or others to ensure it's working.
 
 
 
@@ -265,19 +256,19 @@ The App Engine Standard environment will automatically scale instances. The samp
 For App Engine Flex or Cloud Run, you can use the provided Dockerfile. In App Engine Flex, set runtime: custom in app.yaml and deploy (App Engine will build the image using the Dockerfile). For Cloud Run or other container services, build the Docker image and deploy it (see the Docker section below).
 
 
-Deploying to AWS Lambda (via Zappa)
+## Deploying to AWS Lambda (via Zappa)
 
 You can deploy this Flask application to AWS Lambda using the Zappa framework, which handles packaging the app and setting up API Gateway:
 
-1. Setup AWS: Install the AWS CLI and configure your AWS credentials. Also, create an S3 bucket for Zappa to use (for uploading deployment packages).
+### 1. Setup AWS: Install the AWS CLI and configure your AWS credentials. Also, create an S3 bucket for Zappa to use (for uploading deployment packages).
 
 
-2. Install Zappa:
+### 2. Install Zappa:
 
 pip install zappa
 
 
-3. Update zappa_settings.json: Modify the provided Zappa settings:
+### 3. Update zappa_settings.json: Modify the provided Zappa settings:
 
 Set your AWS region (e.g., "aws_region": "us-east-1") and an S3 bucket name (for "s3_bucket").
 
@@ -287,16 +278,14 @@ Add your OPENAI_API_KEY under environment_variables.
 
 
 
-4. Deploy with Zappa:
+### 4. Deploy with Zappa:
 
 zappa deploy dev
 
 This will package and deploy the app to Lambda. On success, Zappa will output an API Gateway URL for your deployed API.
 
 
-5. Test the API: Use the provided API Gateway URL to test the endpoints (for example, <api-url>/health to check status).
-
-
+### 5. Test the API: Use the provided API Gateway URL to test the endpoints (for example, <api-url>/health to check status).
 
 Notes:
 
@@ -307,23 +296,23 @@ Lambda has a default timeout (typically 30 seconds). The /ask endpoint (GPT-4 ca
 Instead of Zappa, you can also use AWS SAM or the Serverless Framework to deploy this app. For example, with AWS SAM you could containerize this app using the Dockerfile or use a WSGI adapter (such as mangum or awslambdaric) to run Flask on Lambda. The provided Dockerfile can also be used to deploy on AWS ECS/Fargate or AWS App Runner.
 
 
-Deploying with Docker (Container)
+## Deploying with Docker (Container)
 
 The included Dockerfile allows you to run the application in any container environment:
 
-1. Build the Image:
+### 1. Build the Image:
 
 docker build -t ai-doc-search-api .
 
 
-2. Run the Container:
+### 2. Run the Container:
 
 docker run -p 5000:5000 -e OPENAI_API_KEY=<your-openai-key> ai-doc-search-api
 
 This will start the container and map it to port 5000 on your host. The OpenAI API key is passed as an environment variable at runtime for security.
 
 
-3. Test the API: Open http://localhost:5000/health in your browser (or via curl) to verify the service is running inside the container.
+### 3. Test the API: Open http://localhost:5000/health in your browser (or via curl) to verify the service is running inside the container.
 
 
 
