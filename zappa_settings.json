@@ -1,0 +1,13 @@
+{
+    "dev": {
+        "app_function": "app.app",
+        "aws_region": "us-east-1",
+        "profile_name": "default",
+        "project_name": "doc-search-api",
+        "runtime": "python3.10",
+        "s3_bucket": "your-zappa-deploy-bucket",
+        "environment_variables": {
+            "OPENAI_API_KEY": "YOUR-OPENAI-API-KEY"
+        }
+    }
+}

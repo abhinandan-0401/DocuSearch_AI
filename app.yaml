@@ -1,0 +1,10 @@
+runtime: python310
+env: standard
+instance_class: F2
+
+# Entry point to start the application using Gunicorn
+entrypoint: gunicorn -b :$PORT app:app
+
+env_variables:
+  OPENAI_API_KEY: "YOUR-OPENAI-API-KEY"
+  # (Optionally specify EMBEDDING_MODEL or QA_MODEL here if not using defaults)
