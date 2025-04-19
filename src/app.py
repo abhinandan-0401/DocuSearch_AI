@@ -1,17 +1,17 @@
 import logging
 from flask import Flask, request, jsonify
-from config import Config
-from embedding import get_embedding
-from vector_store import VectorStore
-from utils import get_text_snippet, answer_query_with_gpt
+from src.config import Config
+from src.embedding import get_embedding
+from src.vector_store import VectorStore
+from src.utils import get_text_snippet, answer_query_with_gpt
 
 # Initialize Flask app
 app = Flask(__name__)
 # Load configuration into Flask (if needed)
 app.config.from_object(Config)
 
-# Initialize an in-memory vector store (could be replaced with a persistent vector DB)
-vector_store = VectorStore()
+# Initialize ChromaDB vector store
+vector_store = VectorStore(collection_name="mongodb_documents")
 
 # Set up basic logging
 logging.basicConfig(level=logging.INFO)
@@ -28,15 +28,48 @@ def add_document():
     doc_id = data['id']
     text = data['text']
     try:
-        # Generate embedding for the document text
-        embedding_vector = get_embedding(text)
+        # Add document to ChromaDB (embedding will be generated automatically)
+        vector_store.add_document(doc_id, text)
     except Exception as e:
-        logging.error(f"Error generating embedding: {e}")
-        return jsonify({"error": "Failed to generate embedding"}), 500
-    # Add or update the document in the vector store
-    vector_store.add_document(doc_id, text, embedding_vector)
+        logging.error(f"Error adding document to vector store: {e}")
+        return jsonify({"error": "Failed to add document to vector store"}), 500
+    
     logging.info(f"Document added/updated: id={doc_id}, length={len(text)} chars")
     return jsonify({"message": "Document added", "id": doc_id}), 201
+
+@app.route('/documents/batch', methods=['POST'])
+def add_documents_batch():
+    """
+    Add multiple documents to the vector store in a single request.
+    Expects JSON array with objects containing 'id' and 'text'.
+    """
+    data = request.get_json()
+    if not isinstance(data, list):
+        return jsonify({"error": "Invalid request, expected a JSON array of documents"}), 400
+    
+    # Validate all documents before processing
+    for i, doc in enumerate(data):
+        if 'id' not in doc or 'text' not in doc:
+            return jsonify({"error": f"Document at index {i} is missing 'id' or 'text'"}), 400
+    
+    # Collect documents for processing
+    ids = [doc['id'] for doc in data]
+    texts = [doc['text'] for doc in data]
+    metadatas = [{"source": doc['id']} for doc in data]
+    
+    try:
+        # Use ChromaDB's batch processing
+        vector_store.collection.add(
+            ids=ids,
+            documents=texts,
+            metadatas=metadatas
+        )
+    except Exception as e:
+        logging.error(f"Error batch adding documents: {e}")
+        return jsonify({"error": "Failed to add documents in batch"}), 500
+    
+    logging.info(f"Batch added {len(data)} documents")
+    return jsonify({"message": f"Added {len(data)} documents"}), 201
 
 @app.route('/search', methods=['GET'])
 def search_documents():
@@ -47,17 +80,20 @@ def search_documents():
     query = request.args.get('query')
     if not query:
         return jsonify({"error": "Missing 'query' parameter"}), 400
-    try:
-        query_vector = get_embedding(query)
-    except Exception as e:
-        logging.error(f"Error generating query embedding: {e}")
-        return jsonify({"error": "Failed to generate query embedding"}), 500
+    
     # Number of results to return (default 5, or provided via 'k')
     try:
         k = int(request.args.get('k', 5))
     except ValueError:
         k = 5
-    results = vector_store.search(query_vector, top_k=k)
+    
+    try:
+        # Use direct text search in ChromaDB
+        results = vector_store.search(query_text=query, top_k=k)
+    except Exception as e:
+        logging.error(f"Error searching: {e}")
+        return jsonify({"error": "Failed to search documents"}), 500
+    
     # Format the results for response (with text snippet for readability)
     response_data = []
     for doc_id, score, text in results:
@@ -82,14 +118,14 @@ def ask_question():
     # If no documents are available, we cannot answer
     if vector_store.count() == 0:
         return jsonify({"error": "No documents available for context"}), 400
+    
     try:
-        # Embed the question to find relevant documents
-        query_vector = get_embedding(question)
+        # Use direct text search in ChromaDB
+        results = vector_store.search(query_text=question, top_k=3)
     except Exception as e:
-        logging.error(f"Error generating question embedding: {e}")
-        return jsonify({"error": "Failed to generate question embedding"}), 500
-    # Retrieve top documents for context (e.g., top 3 most relevant)
-    results = vector_store.search(query_vector, top_k=3)
+        logging.error(f"Error searching for question context: {e}")
+        return jsonify({"error": "Failed to search for question context"}), 500
+    
     context_texts = [text for (_, _, text) in results]
     try:
         answer = answer_query_with_gpt(question, context_texts)

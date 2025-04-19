@@ -1,5 +1,5 @@
-flask==2.2.2
-openai==0.27.0
-numpy==1.23.5
-python-dotenv==0.21.0
-gunicorn==20.1.0s
+flask
+openai
+numpy
+python-dotenv
+gunicorn
