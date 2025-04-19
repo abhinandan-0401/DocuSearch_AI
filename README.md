@@ -65,7 +65,7 @@ cd DocuSearch_AI <br>
 
 python3 -m venv docusearchai <br><br>
 source docusearchai/bin/activate <br> 
-# On Windows: <br>
+#### On Windows: <br>
 docusearchai\Scripts\activate
 
 ### 3. Install dependencies:
