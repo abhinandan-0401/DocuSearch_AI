@@ -63,8 +63,10 @@ cd DocuSearch_AI <br>
 
 ### 2. Create a virtual environment (optional, but recommended) and activate it:
 
-python3 -m venv venv
-source venv/bin/activate # On Windows: venv\Scripts\activate
+python3 -m venv docusearchai <br><br>
+source docusearchai/bin/activate <br> 
+#### On Windows: <br>
+docusearchai\Scripts\activate
 
 ### 3. Install dependencies:
 
